@@ -1,0 +1,9 @@
+langgraph
+langchain
+langchain-openai
+langchain-anthropic
+langfuse
+instructor
+pydantic
+python-dotenv
+tavily-python
