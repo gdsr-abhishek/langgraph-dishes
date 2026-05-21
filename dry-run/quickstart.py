@@ -1,7 +1,10 @@
 from langchain.tools import tool
 from langchain.chat_models import init_chat_model
 from dotenv import load_dotenv
+from langfuse.langchain import CallbackHandler
 load_dotenv()
+langfuse_handler = CallbackHandler()
+
 model = init_chat_model(
     "openai:gpt-4o-mini",
     temperature=0
@@ -63,9 +66,12 @@ def llm_call(state:dict):
           [  SystemMessage(content="You are a helpful assistant who is specialized in performing arithmetic operations like addition,subtraction , multiplication and division on two numbers")
 
         ]
-        + state["messages"]
+        + state["messages"],
+        config={"callbacks":[langfuse_handler]}
+
         )
         ], "llm_calls":state.get("llm_calls",0 ) + 1
+        
     }
 
 
@@ -102,8 +108,8 @@ agent_builder.add_conditional_edges(
 agent_builder.add_edge("tool_node","llm_call")
 agent  = agent_builder.compile()
 
-from IPython.display import Image,display
-display(Image(agent.get_graph(xray=True).draw_mermaid_png()))
+# from IPython.display import Image,display
+# display(Image(agent.get_graph(xray=True).draw_mermaid_png()))
 
 # from langchain.messages import HumanMessage
 # messages = [HumanMessage(content="Add 3 and 10")]
